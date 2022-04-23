@@ -3,19 +3,39 @@ class PlantsController < ApplicationController
   # GET /plants
   def index
     plants = Plant.all
-    render json: plants
+    render json: plants, status: :ok
   end
 
   # GET /plants/:id
   def show
     plant = Plant.find_by(id: params[:id])
-    render json: plant
+    render json: plant, status: :ok
   end
 
   # POST /plants
   def create
     plant = Plant.create(plant_params)
     render json: plant, status: :created
+  end
+
+  def update
+    plant = Plant.find_by(id: params[:id])
+    if plant
+      plant.update(plant_params)
+      render json: plant, status: :accepted
+    else
+      render json: { error: "Plant not found" }, status: :not_found
+    end
+  end
+
+  def destroy
+    plant = Plant.find_by(id: params[:id])
+    if plant
+      plant.destroy
+      head :no_content
+    else
+      render json: { error: "Plant not found" }, status: :not_found
+    end
   end
 
   private
